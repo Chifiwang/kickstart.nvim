@@ -115,7 +115,7 @@ vim.opt.clipboard = 'unnamedplus'
 -- Enable break indent
 vim.opt.breakindent = true
 
--- Save undo history
+--https://github.com/Chifiwang/kickstart.nvim Save undo history
 vim.opt.undofile = true
 
 -- Case-insensitive searching UNLESS \C or capital in search
@@ -197,6 +197,26 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
+-- Make cursor a block cursor
+--vim.opt.guicursor = ''
+
+-- Relative Line numbers
+vim.opt.nu = true
+-- vim.opt.relativenumber = true
+vim.opt.smartindent = true
+
+-- 80 char bar for reference for coding practices
+vim.opt.colorcolumn = '80'
+vim.api.nvim_create_autocmd('BufEnter', {
+  callback = function()
+    vim.cmd [[hi colorcolumn guibg='#1f212e']]
+  end,
+})
+-- set tab spacing
+vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
+vim.expandtab = true
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -243,11 +263,45 @@ require('lazy').setup {
     'lewis6991/gitsigns.nvim',
     opts = {
       signs = {
-        add = { text = '+' },
-        change = { text = '~' },
+        add = { text = '|' },
+        change = { text = '|' },
         delete = { text = '_' },
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
+        untracked = { text = '┆' },
+      },
+      signcolumn = true, -- Toggle with `:Gitsigns toggle_signs`
+      numhl = false, -- Toggle with `:Gitsigns toggle_numhl`
+      linehl = false, -- Toggle with `:Gitsigns toggle_linehl`
+      word_diff = false, -- Toggle with `:Gitsigns toggle_word_diff`
+      watch_gitdir = {
+        follow_files = true,
+      },
+      auto_attach = true,
+      attach_to_untracked = false,
+      current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+      current_line_blame_opts = {
+        virt_text = true,
+        virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
+        delay = 1000,
+        ignore_whitespace = false,
+        virt_text_priority = 100,
+      },
+      current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
+      sign_priority = 6,
+      update_debounce = 100,
+      status_formatter = nil, -- Use default
+      max_file_length = 40000, -- Disable if file is longer than this (in lines)
+      preview_config = {
+        -- Options passed to nvim_open_win
+        border = 'single',
+        style = 'minimal',
+        relative = 'cursor',
+        row = 0,
+        col = 1,
+      },
+      yadm = {
+        enable = false,
       },
     },
   },
@@ -364,7 +418,7 @@ require('lazy').setup {
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = '[F]ind [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
@@ -681,7 +735,7 @@ require('lazy').setup {
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<C-i>'] = cmp.mapping.confirm { select = true },
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
@@ -725,6 +779,13 @@ require('lazy').setup {
     lazy = false, -- make sure we load this during startup if it is your main colorscheme
     priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
+      require('tokyonight').setup {
+        transparent = true,
+        styles = {
+          sidebars = 'transparent',
+          floats = 'transparent',
+        },
+      }
       -- Load the colorscheme here
       vim.cmd.colorscheme 'tokyonight-night'
 
@@ -814,8 +875,8 @@ require('lazy').setup {
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
 }
 
 -- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
+--vim: ts=4 sts=4 sw=4
