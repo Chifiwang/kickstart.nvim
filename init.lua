@@ -1,5 +1,5 @@
 --[[
-
+C:\Users\chees\AppData\Local\nvim\init.lua
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
 =====================================================================
@@ -212,11 +212,54 @@ vim.api.nvim_create_autocmd('BufEnter', {
     vim.cmd [[hi colorcolumn guibg='#1f212e']]
   end,
 })
+
+-- nowrap buffer
+vim.api.nvim_create_autocmd('BufEnter', {
+  callback = function()
+    vim.cmd [[set wrap!]]
+  end,
+})
+
+-- autocomplete certain wrappers
+-- vim.api.nvim_set_keymap('i', '"', '""<left>', { noremap = true })
+-- vim.api.nvim_set_keymap('i', "'", "''<left>", { noremap = true })
+-- vim.api.nvim_set_keymap('i', '<', '<><left>', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '[', '[]<left>', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '{', '{}<left>', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '(', '()<left>', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '[<cr>', '[<cr>]<esc>O', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '{<cr>', '{<cr>}<esc>O', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '(<cr>', '(<cr>)<esc>O', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '""""<cr>', '"""<cr>"""<esc>O', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '/*', '/*<cr>/<esc>O', { noremap = true })
+-- vim.api.nvim_set_keymap('i', "\\'", "'", { noremap = true })
+-- vim.api.nvim_set_keymap('i', '\\"', '"', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '\\[', '[', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '\\{', '{', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '\\(', '(', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '\\<', '<', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '""', '""', { noremap = true })
+-- vim.api.nvim_set_keymap('i', "''", "''", { noremap = true })
+-- vim.api.nvim_set_keymap('i', '[]', '[]', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '{}', '{}', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '()', '()', { noremap = true })
+-- vim.api.nvim_set_keymap('i', '<>', '<>', { noremap = true })
+
 -- set tab spacing
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.expandtab = true
+
+
+-- get file path
+vim.keymap.set('n', '<leader>@<cr>', function ()
+  -- print("Copied Path: ")
+  vim.cmd("let @* = expand(\"%:p\")")
+end, {noremap = true})
+vim.keymap.set('n', '<leader>@*<cr>', function ()
+  vim.cmd("let @* = expand('%:p:h')")
+end, {noremap = true})
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -254,21 +297,21 @@ require('lazy').setup {
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
 
+
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following lua:
   --    require('gitsigns').setup({ ... })
-  --
   -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
       signs = {
-        add = { text = '|' },
-        change = { text = '|' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-        untracked = { text = '┆' },
+        add = { text = '▌' },
+        change = { text = '▌' },
+        delete = { text = '▂' },
+        topdelete = { text = '🮂' },
+        changedelete = { text = '🮌' },
+        untracked = { text = '🮌' },
       },
       signcolumn = true, -- Toggle with `:Gitsigns toggle_signs`
       numhl = false, -- Toggle with `:Gitsigns toggle_numhl`
@@ -659,12 +702,22 @@ require('lazy').setup {
 
   { -- Autoformat
     'stevearc/conform.nvim',
+    keys = {
+      {
+        '<leader>cf',
+        function()
+          require('conform').format { async = true, lsp_fallback = true }
+        end,
+        mode = '',
+        desc = 'Format Buffer',
+      },
+    },
     opts = {
       notify_on_error = false,
-      format_on_save = {
-        timeout_ms = 500,
-        lsp_fallback = true,
-      },
+      -- format_on_save = {
+      --   timeout_ms = 500,
+      --   lsp_fallback = true,
+      -- },
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
